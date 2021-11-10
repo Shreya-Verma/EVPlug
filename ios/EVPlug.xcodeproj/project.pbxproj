@@ -37,6 +37,8 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = EVPlug/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = EVPlug/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = EVPlug/main.m; sourceTree = "<group>"; };
+		35B1DC3E2739C411006005A1 /* Ionicons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
+		35B1DC3F2739C411006005A1 /* FontAwesome.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
 		7EC23D4E88A47D4CB7931A56 /* Pods-EVPlug.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EVPlug.release.xcconfig"; path = "Target Support Files/Pods-EVPlug/Pods-EVPlug.release.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = EVPlug/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		81B6B3274FB444458690E6DF /* Pods-EVPlug-EVPlugTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EVPlug-EVPlugTests.debug.xcconfig"; path = "Target Support Files/Pods-EVPlug-EVPlugTests/Pods-EVPlug-EVPlugTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -86,6 +88,7 @@
 		13B07FAE1A68108700A75B9A /* EVPlug */ = {
 			isa = PBXGroup;
 			children = (
+				35B1DC3D2739C283006005A1 /* Fonts */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -104,6 +107,15 @@
 				83C1CF93866B17E9BDC5BB80 /* libPods-EVPlug-EVPlugTests.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		35B1DC3D2739C283006005A1 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				35B1DC3F2739C411006005A1 /* FontAwesome.ttf */,
+				35B1DC3E2739C411006005A1 /* Ionicons.ttf */,
+			);
+			name = Fonts;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -145,7 +157,6 @@
 				81B6B3274FB444458690E6DF /* Pods-EVPlug-EVPlugTests.debug.xcconfig */,
 				8EEB2F4815104E5C0685E084 /* Pods-EVPlug-EVPlugTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};

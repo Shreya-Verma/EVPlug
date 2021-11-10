@@ -1,6 +1,15 @@
 package com.evplug;
 
+
+import android.os.Bundle;
+
 import com.facebook.react.ReactActivity;
+
+import org.devio.rn.splashscreen.SplashScreen;
+/**
+ * EVPLUG
+ * Native configuration
+ */
 
 public class MainActivity extends ReactActivity {
 
@@ -12,4 +21,14 @@ public class MainActivity extends ReactActivity {
   protected String getMainComponentName() {
     return "EVPlug";
   }
+
+  /**
+    EVPLUG
+    Native configuration
+   */
+   @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        SplashScreen.show(this);
+        super.onCreate(savedInstanceState);
+    }
 }
