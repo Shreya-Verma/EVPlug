@@ -1,7 +1,9 @@
 import React, {useEffect} from 'react'
+import { NavigationContainer } from '@react-navigation/native';
 import SplashScreen from 'react-native-splash-screen'
 import { Platform } from 'react-native'
-import RootNavigation from './src/Routes/RootNavigation'
+import HomeNavigation from './src/Routes/HomeNavigation'
+import AuthNavigation from './src/Routes/AuthNavigation';
 
 const App = () => {
   
@@ -10,7 +12,10 @@ const App = () => {
   },[]);
 
   return (
-    <RootNavigation/>
+    <NavigationContainer>
+      <AuthNavigation/>
+    </NavigationContainer>
+    
   )
 } 
 export default App;

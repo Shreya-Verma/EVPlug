@@ -1,13 +1,12 @@
 import React from 'react'
-import { SafeAreaView, StyleSheet} from 'react-native'
-import EVPlugMap from '../Components/EVPlugMap'
-import Icon from 'react-native-vector-icons/Ionicons'
+import { SafeAreaView, View, StyleSheet} from 'react-native'
+
 
 const HomeScreen = () => {
     return (
         <SafeAreaView style={styles.container}>
            {/* <EVPlugMap /> */}
-           <Icon name="caret-forward-circle-sharp" size={30} color="black" />
+          
         </SafeAreaView>
     )
 }
