@@ -1,6 +1,6 @@
 export default  {
     white: '#fff',
-    primary:'#142850',
-    buttonGradient1: '#27496D',
-    buttonGradient2: '#142850',
+    primary:'#006097',
+    buttonGradient1: '#0073b1',
+    buttonGradient2: '#006097',
 }

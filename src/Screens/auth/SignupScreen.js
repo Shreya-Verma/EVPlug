@@ -122,11 +122,11 @@ export default SignupScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#142850',
+    backgroundColor: Colors.primary,
   },
   footer: {
     flex: Platform.OS === 'ios' ? 3 : 5,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.white,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     paddingHorizontal: 20,
