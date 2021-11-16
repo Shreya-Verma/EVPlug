@@ -37,7 +37,7 @@
 <!--Added for google maps-->
     <meta-data
      android:name="com.google.android.geo.API_KEY"
-     android:value="AIzaSyDlSC_RbwpAoC5tLH0tS4nc4PjI-nmNv88"/>
+     android:value="YOUR_KEY"/>
     <uses-library android:name="org.apache.http.legacy" android:required="false"/>
 <!--TODO : remove your api-->
 
