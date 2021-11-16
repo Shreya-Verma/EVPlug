@@ -25,7 +25,8 @@ const MainTabsNavigation = () => (
     tabBarActiveTintColor: Colors.primary,
     tabBarInactiveTintColor: 'gray',
     tabBarShowLabel: false,
-    headerShown: false
+    headerShown: false,
+    keyboardHidesTabBar: true
   })}>
     <Tab.Screen name="HomeStack" component={HomeStack}/>
     <Tab.Screen name="FavStack" component={FavouritesStack}/>

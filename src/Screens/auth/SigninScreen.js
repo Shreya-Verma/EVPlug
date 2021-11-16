@@ -1,100 +1,26 @@
-import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Platform,
-  StyleSheet,
-  ScrollView,
-  StatusBar,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import {HelperText, TextInput} from 'react-native-paper';
-import * as Animatable from 'react-native-animatable';
-import LinearGradient from 'react-native-linear-gradient';
+import React, {useState,useEffect,useContext} from 'react';
+import {StyleSheet, StatusBar} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 import Colors from '../../constants/Colors';
 import AuthScreenHeader from '../../components/AuthScreenHeader';
+import AuthForm from '../../components/AuthForm';
+import { Context } from '../../context/AuthContext';
 
 const SigninScreen = ({navigation}) => {
+  const {state, signin, clearErrorMessage} = useContext(Context);
+  useEffect(() => navigation.addListener('blur', clearErrorMessage),[navigation]);
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor={Colors.primary} barStyle="light-content" />
-      <AuthScreenHeader text="Sign In!" icon="person-outline" />
-      <Animatable.View animation="fadeInUpBig" style={styles.footer}>
-        <ScrollView>
-          <View style={styles.inputBoxesView}>
-            <TextInput
-              mode="outlined"
-              placeholder="john.doe@gmail.com"
-              label="Email"
-              error={false}
-              style={styles.textInput}
-              value=""
-              outlineColor="grey"
-              activeOutlineColor="blue"
-              autoCapitalize="none"
-              autoCorrect={false}
-              right={<TextInput.Icon name="email" />}
-              onChangeText={text => setText(text)}
-            />
-          </View>
-         
-
-          <View style={styles.inputBoxesView}>
-            <TextInput
-              mode="outlined"
-              label="Password"
-              secureTextEntry
-              error={false}
-              style={styles.textInput}
-              value=""
-              outlineColor="grey"
-              activeOutlineColor="blue"
-              autoCapitalize="none"
-              autoCorrect={false}
-              right={<TextInput.Icon name="eye" />}
-              onChangeText={text => setText(text)}
-            />
-          </View>
-         
-          { true ? (
-          <View  style={{alignItems:'center'}}>
-            <HelperText>Hello</HelperText>
-          </View>
-          ) : null }
-
-          <View style={styles.buttonView}>
-            <TouchableOpacity style={styles.button} onPress={() => {}}>
-              <LinearGradient
-                colors={[Colors.buttonGradient1, Colors.buttonGradient2]}
-                style={styles.button}>
-                <Text
-                  style={{
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: 'bold',
-                  }}>
-                  Sign In
-                </Text>
-              </LinearGradient>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={{marginTop: 15}} onPress={()=> navigation.navigate('SignUp')}>
-              <Text
-                style={{
-                  color: Colors.primary,
-                  marginTop: 15,
-                  fontSize: 14,
-                  fontWeight: 'normal',
-                }}>
-                New to EVPlug? Sign Up
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-      </Animatable.View>
+        <AuthScreenHeader text="Sign In!" icon="person-outline" />
+        <AuthForm 
+          errorMessage={state.errorMessage}
+          submitButtonText='Sign In' 
+          onSubmit={signin} 
+          text='New to EVPlug? Sign Up!'
+          routeName='SignUp'/>
     </SafeAreaView>
   );
 };
@@ -106,31 +32,4 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.primary,
   },
-  footer: {
-    flex: Platform.OS === 'ios' ? 3 : 5,
-    backgroundColor: Colors.white,
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    paddingHorizontal: 20,
-    paddingVertical: 30,
-  },
-  inputBoxesView: {
-    flexDirection: 'row',
-    marginTop: 15,
-    paddingBottom: 5,
-  },
-  textInput: {
-    flex: 1,
-  },
-  buttonView: {
-    alignItems: 'center',
-    marginTop: 30,
-  },
-  button: {
-    width: '100%',
-    height: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 10,
-  }
 });
