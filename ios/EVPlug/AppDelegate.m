@@ -14,7 +14,8 @@
 
 //EVPLUG
 #import <GoogleMaps/GoogleMaps.h>
-#import "RNSplashScreen.h" 
+#import "RNSplashScreen.h"
+#import <Firebase.h>
 
 static void InitializeFlipper(UIApplication *application) {
   FlipperClient *client = [FlipperClient sharedClient];
@@ -32,7 +33,8 @@ static void InitializeFlipper(UIApplication *application) {
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   //EVPLUG
-  [GMSServices provideAPIKey:@"YOUR_KEY"];
+  [GMSServices provideAPIKey:@"AIzaSyDlSC_RbwpAoC5tLH0tS4nc4PjI-nmNv88"];
+  [FIRApp configure];
 
 #ifdef FB_SONARKIT_ENABLED
   InitializeFlipper(application);

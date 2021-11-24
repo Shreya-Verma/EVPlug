@@ -1,5 +1,5 @@
 import axios from 'axios';
-import CONFIG from '../../env.config';
+import CONFIG from "../../env.config";
 
 export default axios.create({
     baseURL: CONFIG.OCM_BASE_URL,

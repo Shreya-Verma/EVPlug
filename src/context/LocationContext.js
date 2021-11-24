@@ -1,41 +1,45 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import createDataContext from './createDataContext';
 import OCMApi from '../api/OCMApi';
 
 const locationReducer = (state, action) => {
   switch (action.type) {
+    case 'fetch_poi':
+        return {...state, evdetails: action.payload, searchedLocation : null};
     case 'current_location':
-        return { ...state };
-    case 'changed_location':
-        return { ...state };
-    case 'search_query' :
-        return {...state}
+      return {...state ,currentLocation: action.payload};
+    case 'searched_location':
+      return {...state, searchedLocation: action.payload};
     default:
         return state;
   }
 };
 
-const changeName = dispatch => name => {
-  dispatch({ type: 'change_name', payload: name });
+const fetchCurrentLocation = dispatch => (location) => {
+  dispatch({ type: 'current_location', payload: location });
 };
-const startRecording = dispatch => () => {
-  dispatch({ type: 'start_recording' });
+
+const fetchSearchedLocation = dispatch => (location) => {
+  dispatch({ type: 'searched_location', payload: location });
 };
-const stopRecording = dispatch => () => {
-  dispatch({ type: 'stop_recording' });
-};
-const addLocation = dispatch => (location, recording) => {
-  dispatch({ type: 'add_current_location', payload: location });
-  if (recording) {
-    dispatch({ type: 'add_location', payload: location });
+
+
+const fetchPoiData = dispatch => async ({latitude,longitude}) => {
+  //make api call to get location
+  try{
+    const result =  OCMApi.get(`/poi?distance=30&distanceunit=miles&latitude=${latitude}&longitude=${longitude}&maxresults=20&output=json&compact=true&verbose=false`);
+    result.then((response)=>{
+        dispatch({type:'fetch_poi', payload: response.data})
+    }).catch((err) => {
+       //error
+    });
+  }catch(err){
+    console.log('error')
   }
 };
-const reset = dispatch => () => {
-  dispatch({ type: 'reset' });
-};
+
 
 export const { Context, Provider } = createDataContext(
   locationReducer,
-  { startRecording, stopRecording, addLocation, changeName, reset },
-  { name: '', recording: false, locations: [], currentLocation: null }
+  { fetchCurrentLocation, fetchPoiData , fetchSearchedLocation },
+  { evdetails: [], currentLocation: null, searchedLocation: null }
 );

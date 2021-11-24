@@ -1,131 +1,142 @@
 import createDataContext from './createDataContext';
-//import EVPlugApi from '../api/EVPlugApi';
-import auth from '@react-native-firebase/auth';
+import auth from '../api/auth';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 const authReducer = (state, action) => {
   switch (action.type) {
-    case 'add_error':
-      return {
-        ...state, 
-        errorMessage: action.payload
-      };
     case 'signin':
       return {
-        errorMessage: '', 
-        token: action.payload
-      };
-    case 'clear_error_message':
-      return {
-        ...state, 
-        errorMessage: ''
+        errorMessage: '',
+        token: action.payload,
       };
     case 'signout':
       return {
-        token: null, 
-        errorMessage: ''
+        token: null,
+        errorMessage: '',
+      };
+    case 'add_error':
+      return {
+        ...state,
+        errorMessage: action.payload,
+      };
+    case 'clear_error_message':
+      return {
+        ...state,
+        errorMessage: '',
       };
     default:
       return state;
   }
 };
 
-// const signup =
-//   dispatch =>
-//   async ({email, password}) => {
-//     console.log({email, password});
-//     console.log(EVPlugApi);
-
-//     try {
-//       const response = await EVPlugApi.post('/signup', {
-//         email,
-//         password,
-//       });
-//       console.log(response);
-//       await AsyncStorage.setItem('token', response.data.token);
-//       dispatch({type: 'signin', payload: response.data.token});
-//       //navigate to Home Screen
-//     } catch (err) {
-//       console.log(err);
-//       dispatch({
-//         type: 'add_error',
-//         payload: 'Something went wrong with sign up!',
-//       });
-//     }
-//   };
-
 const signup =
   dispatch =>
   async ({email, password}) => {
     try {
-      const result = await auth()
-        .createUserWithEmailAndPassword(email, password)
-        .then(response => {
-            console.log(response);
-            const idToken = auth().currentUser.getIdToken();
-            console.log(idToken);
-            dispatch({type: 'signin', payload: idToken});
-        })
-        .catch(error => {
-          console.log(error);
-          if (error.code === 'auth/email-already-in-use') {
-            dispatch({type: 'add_error', payload: 'Email already in use!'});
-          }
-          if (error.code === 'auth/invalid-email') {
-            dispatch({type: 'add_error', payload: 'Invalid email!'});
-          }
-        });
-    } catch (err) {
-      console.log(err);
-      dispatch({
-        type: 'add_error',
-        payload: 'Something went wrong with sign up!',
+      const response = await auth.post('/evplug/signup', {
+        email,
+        password,
       });
+      await EncryptedStorage.setItem('token',response.data.token);
+      dispatch({type: 'signin', payload: response.data.token});
+    } catch (err) {
+      if (err.error === 'auth/operation-not-allowed') {
+        dispatch({
+          type: 'add_error', 
+          payload: 'Empty email or password!'
+        });
+      } else if (err.error === 'auth/email-already-in-use') {
+        dispatch({
+          type: 'add_error', 
+          payload: 'Email already in use!'
+        });
+      } else if (err.error === 'auth/invalid-email') {
+        dispatch({
+          type: 'add_error', 
+          payload: 'Invalid email!'
+        });
+      } else if (err.error === 'auth/weak-password') {
+        dispatch({
+          type: 'add_error',
+          payload: 'Password should be at least 6 characters',
+        });
+      } else {
+        dispatch({
+          type: 'add_error',
+          payload: 'Something went wrong with sign up!',
+        });
+      }
     }
   };
+
+
 
 const signin =
   dispatch =>
   async ({email, password}) => {
     try {
-      const response = await auth()
-        .signInWithEmailAndPassword(email, password)
-        .then(response => {
-          console.log(response);
-          const idToken =  auth().currentUser.getIdToken();
-          dispatch({type: 'signin', payload: idToken});
-         
-        })
-        .catch(error => {
-          console.log(error);
-          dispatch({type: 'add_error', payload: 'Email already in use!'});
-        });
-    } catch (err) {
-      console.log(err);
-      dispatch({
-        type: 'add_error',
-        payload: 'Something went wrong with sign in!',
+      const response = await auth.post('/evplug/signin', {
+        email,
+        password,
       });
+      console.log(response);
+      await EncryptedStorage.setItem('token',response.data.token);
+      dispatch({type: 'signin', payload: response.data.token});
+    } catch (err) {
+      if (err.error === 'auth/operation-not-allowed') {
+        dispatch({
+          type: 'add_error', 
+          payload: 'Empty email or password!'
+        });
+      } else if (err.error === 'auth/user-not-found') {
+        dispatch({
+          type: 'add_error', 
+          payload: 'No user registred with given email id!'
+        });
+      } else if (err.error === 'auth/invalid-email') {
+        dispatch({
+          type: 'add_error', 
+          payload: 'Invalid email!'
+        });
+      } else if (err.error === 'auth/wrong-password') {
+        dispatch({
+          type: 'add_error',
+          payload: 'Invalid password!',
+        });
+      } else {
+        dispatch({
+          type: 'add_error',
+          payload: 'Something went wrong with sign in!',
+        });
+      }
     }
   };
 
+
+
+
 const signout = dispatch => async () => {
-  const response = await auth()
-    .signOut()
-    .then(resp => {
+  try {
+      await EncryptedStorage.removeItem("token");
       dispatch({type: 'signout'});
-    })
-    .catch(err => {});
+  } catch (error) {
+    console.log("native",error);
+  }
 };
 
 const clearErrorMessage = dispatch => () => {
   dispatch({type: 'clear_error_message'});
 };
 
+const restoreToken = dispatch => (token) => {
+  dispatch({type: 'signin', payload: token});
+};
+
 export const {Context, Provider} = createDataContext(
   authReducer,
-  {signup, signin, signout, clearErrorMessage},
+  {signup, signin, signout, clearErrorMessage, restoreToken},
   {
     token: null,
-    errorMessage:''
-  }
+    errorMessage: ''
+  },
 );

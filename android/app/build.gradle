@@ -82,8 +82,6 @@ project.ext.react = [
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
-
-
 //EVPLUG
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 
@@ -200,7 +198,7 @@ dependencies {
    */
     implementation project(':react-native-maps')
     implementation platform('com.google.firebase:firebase-bom:29.0.0')
-
+    
     
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion

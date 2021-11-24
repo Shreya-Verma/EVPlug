@@ -59,6 +59,5 @@ buck-out/
 # CocoaPods
 /ios/Pods/
 
-# API FILES
-*/android/app/src/main/AndroidManifest.xml
-*/ios/EVPlug/AppDelegate.m
+#Environament variables with API key
+.env

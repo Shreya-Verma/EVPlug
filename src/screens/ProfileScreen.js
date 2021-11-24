@@ -1,15 +1,34 @@
-import React from 'react'
-import { View, Text , StatusBar} from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import Colors from '../constants/Colors'
+import React, {useContext} from 'react';
+import {
+  View,
+  Text,
+  StatusBar,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import Colors from '../constants/Colors';
+import {Context} from '../context/AuthContext';
 
 const ProfileScreen = () => {
-    return (
-        <SafeAreaView>
-             <StatusBar backgroundColor={Colors.primary} barStyle="light-content" />
-            <Text>ProfileScreen</Text>
-        </SafeAreaView>
-    )
-}
+  const {signout} = useContext(Context);
 
-export default ProfileScreen
+  return (
+    <SafeAreaView style={styles.container}>
+      <StatusBar backgroundColor={Colors.primary} barStyle="light-content" />
+      <TouchableOpacity onPress={signout}>
+        <Text style={{color: 'black'}}>Signout</Text>
+      </TouchableOpacity>
+    </SafeAreaView>
+  );
+};
+
+export default ProfileScreen;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});

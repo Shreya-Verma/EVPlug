@@ -5,11 +5,12 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import Colors from '../../constants/Colors';
 import AuthScreenHeader from '../../components/AuthScreenHeader';
 import AuthForm from '../../components/AuthForm';
-import { Context } from '../../context/AuthContext';
+import { Context as AuthContext } from '../../context/AuthContext';
 
 const SigninScreen = ({navigation}) => {
-  const {state, signin, clearErrorMessage} = useContext(Context);
+  const {state, signin, clearErrorMessage} = useContext(AuthContext);
   useEffect(() => navigation.addListener('blur', clearErrorMessage),[navigation]);
+  useEffect(() => navigation.addListener('focus', clearErrorMessage),[navigation]);
 
   return (
     <SafeAreaView style={styles.container}>

@@ -7,6 +7,7 @@ import ProfileStack from './ProfileStack';
 import FavouritesStack from './FavouritesStack';
 import Colors from '../constants/Colors';
 
+
 const Tab = createBottomTabNavigator();
 
 const MainTabsNavigation = () => (

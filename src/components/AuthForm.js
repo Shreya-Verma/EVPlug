@@ -14,13 +14,21 @@ import { useNavigation } from '@react-navigation/native';
 
 import Colors from '../constants/Colors';
 import LinearGradient from 'react-native-linear-gradient';
+import Loader from './Loader';
 
 const AuthForm = ({errorMessage, submitButtonText, onSubmit, text, routeName }) => {
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  
+  const [loading, setLoading] = useState(false);
+
   const navigation = useNavigation();
+
+  const doSubmit = async () =>{
+      setLoading(true);
+      await onSubmit({email, password});
+      setLoading(false);
+  }
 
     return (
         <Animatable.View animation="fadeInUpBig" style={styles.footer}>
@@ -61,12 +69,12 @@ const AuthForm = ({errorMessage, submitButtonText, onSubmit, text, routeName }) 
          
           { errorMessage ? (
           <View  style={{alignItems:'center'}}>
-            <HelperText>{errorMessage}</HelperText>
+            <HelperText style={{color:'red'}}>{errorMessage}</HelperText>
           </View>
           ) : null }
 
           <View style={styles.buttonView}>
-            <TouchableOpacity style={styles.button} onPress={() => onSubmit({email, password})}>
+            <TouchableOpacity style={styles.button} onPress={doSubmit}>
               <LinearGradient
                 colors={[Colors.buttonGradient1, Colors.buttonGradient2]}
                 style={styles.button}>
@@ -94,6 +102,8 @@ const AuthForm = ({errorMessage, submitButtonText, onSubmit, text, routeName }) 
             </TouchableOpacity>
           </View>
         </ScrollView>
+        { loading ? <Loader/> : null}
+
       </Animatable.View>
     )
 }

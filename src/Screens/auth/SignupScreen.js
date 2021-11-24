@@ -11,6 +11,7 @@ const SignupScreen = ({navigation}) => {
 
   const {state, signup, clearErrorMessage} = useContext(Context);
   useEffect(() => navigation.addListener('blur', clearErrorMessage),[navigation]);
+  useEffect(() => navigation.addListener('focus', clearErrorMessage),[navigation]);
 
   return (
     <SafeAreaView style={styles.container}>
