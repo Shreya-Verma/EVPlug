@@ -1,57 +1,39 @@
 import createDataContext from './createDataContext';
 import auth from '../api/auth';
-import OCMApi from '../api/OCMApi';
 import EncryptedStorage from 'react-native-encrypted-storage';
 
 const favouriteReducer = (state, action) => {
   switch (action.type) {
     case 'dblist':
-      return { dbList: action.payload}
-    case 'favlist':
-      return {...state, favList: action.payload}
+      return {dbList: action.payload};
     default:
       return state;
   }
 };
 
-const getDBList = dispatch = async () => {
+const getDBList = dispatch => async () => {
   try {
     const token = await EncryptedStorage.getItem('token');
     await auth
-      .get('/evplug/getFav',{
+      .get('/evplug/getFav', {
         headers: {
-          Authorization: 'Bearer ' + token
-        }})
+          Authorization: 'Bearer ' + token,
+        },
+      })
       .then(response => {
-        if (response!== null) {
-          dispatch({type:'dblist', payload: response.data[0].fav})
+        if (response !== null) {
+          console.log('Reached here');
+          console.log(response);
+          dispatch({type: 'dblist', payload: response.data[0].fav});
         }
       })
       .catch(err => {
+        console.log('in error');
       });
-  } catch (err) {
-
-  }
+  } catch (err) {}
 };
 
-
-const getFavourite = dispatch => async (list) =>{
-  try {
-    await OCMApi
-      .get(`/poi?output=json&chargepointid=${list.join()}`)
-      .then(response => {
-        dispatch({type:'favlist' , payload: response.data})
-      })
-      .catch(err => {
-        console.log('error');
-      });
-  } catch (err) {
-    console.log('error11');
-  }
-}
-
-
-const addToFav = dispatch => async () => {
+const addToFav = dispatch => async ocmid => {
   try {
     const response = await auth.get('/evplug/addFav');
   } catch (err) {
@@ -59,14 +41,32 @@ const addToFav = dispatch => async () => {
   }
 };
 
-const removeFromFav = dispatch => ocmid => {
-  
+const removeFromFav = dispatch => async ocmid => {
+  try {
+    const token = await EncryptedStorage.getItem('token');
+    await auth
+      .post(
+        '/evplug/remove',
+        {ocmid: ocmid},
+        {headers: {Authorization: 'Bearer ' + token}},
+      )
+      .then(response => {
+        if (response !== null) {
+          console.log('Reached here');
+          console.log(response);
+          dispatch({type: 'dblist', payload: response.data.fav});
+        }
+      })
+      .catch(err => {
+        console.log('in error');
+      });
+  } catch (err) {
+    console.log('in error');
+  }
 };
-
-
 
 export const {Context, Provider} = createDataContext(
   favouriteReducer,
-  {addToFav, removeFromFav, getFavourite, getDBList},
-  {favList: [], dbList:[]},
+  {addToFav, removeFromFav, getDBList},
+  {dbList: []},
 );
