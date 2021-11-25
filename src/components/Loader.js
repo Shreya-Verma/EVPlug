@@ -21,6 +21,7 @@ const styles = StyleSheet.create({
         opacity: 0.5,
         backgroundColor: 'transparent',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        zIndex: 5
     }
 })

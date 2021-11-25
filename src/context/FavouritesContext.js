@@ -11,49 +11,18 @@ const favouriteReducer = (state, action) => {
   }
 };
 
-const getDBList = dispatch => async () => {
-  try {
-    const token = await EncryptedStorage.getItem('token');
-    await auth
-      .get('/evplug/getFav', {
-        headers: {
-          Authorization: 'Bearer ' + token,
-        },
-      })
-      .then(response => {
-        if (response !== null) {
-          console.log('Reached here');
-          console.log(response);
-          dispatch({type: 'dblist', payload: response.data[0].fav});
-        }
-      })
-      .catch(err => {
-        console.log('in error');
-      });
-  } catch (err) {}
-};
 
-const addToFav = dispatch => async ocmid => {
-  try {
-    const response = await auth.get('/evplug/addFav');
-  } catch (err) {
-    console.log('error');
-  }
-};
-
-const removeFromFav = dispatch => async ocmid => {
+const addToFav = dispatch => async (ocmid) => {
   try {
     const token = await EncryptedStorage.getItem('token');
     await auth
       .post(
-        '/evplug/remove',
+        '/evplug/addFav',
         {ocmid: ocmid},
         {headers: {Authorization: 'Bearer ' + token}},
       )
       .then(response => {
         if (response !== null) {
-          console.log('Reached here');
-          console.log(response);
           dispatch({type: 'dblist', payload: response.data.fav});
         }
       })
@@ -65,8 +34,32 @@ const removeFromFav = dispatch => async ocmid => {
   }
 };
 
+const removeFromFav = dispatch => async (ocmid) => {
+  try {
+    const token = await EncryptedStorage.getItem('token');
+    await auth
+      .post(
+        '/evplug/remove',
+        {ocmid: ocmid},
+        {headers: {Authorization: 'Bearer ' + token}},
+      )
+      .then(response => {
+        if (response !== null) {
+          dispatch({type: 'dblist', payload: response.data.fav});
+        }
+      })
+      .catch(err => {
+        console.log('in error');
+      });
+  } catch (err) {
+    console.log('in error');
+  }
+};
+
+
+
 export const {Context, Provider} = createDataContext(
   favouriteReducer,
-  {addToFav, removeFromFav, getDBList},
+  {addToFav, removeFromFav},
   {dbList: []},
 );

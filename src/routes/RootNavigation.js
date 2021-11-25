@@ -22,7 +22,6 @@ const RootNavigation = () => {
           setInitalizing(false);
         })
         .catch(err => {
-          console.log('errror', err);
           setInitalizing(false);
         });
     };

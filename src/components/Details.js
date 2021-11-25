@@ -1,37 +1,72 @@
-import React, { useState, useContext } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Colors from '../constants/Colors';
+import auth from '../api/auth';
+import EncryptedStorage from 'react-native-encrypted-storage';
+import Loader from './Loader';
+
+const Details = ({details, add, remove}) => {
+
+  const [fav, setFav] = useState(false);
+  const [loading,setLoading] = useState(false);
+
+  useEffect(() => {
+    const getDBList = async () => {
+      setLoading(true);
+      try {
+        const token = await EncryptedStorage.getItem('token');
+        await auth
+          .get('/evplug/getFav', {
+            headers: {
+              Authorization: 'Bearer ' + token,
+            },
+          })
+          .then(resp => {
+            const list = resp.data[0].fav;
+            if(list.includes(details.ID)){
+              setFav(true);
+            }
+          })
+          .catch(err => {
+            console.log("error")
+          });
+      } catch (err) {
+        console.log("error")
+      }
+      setLoading(false);
+    };
+
+    getDBList();
+
+  }, [fav]);
+  
 
 
-const Details = ({details,  add , remove}) => {
 
-const [fav, setFav] = useState(false); 
-
-const handleState = () => {
-    if(fav){
-      //remove from list
-      console.log("remove")
+  const handleState = () => {
+    if (fav) {
+      console.log('remove');
       remove(details.ID);
-      setFav(false);
-
-    }else{
+     
+    } else {
       // Add to list
-      console.log("add")
-      add(details);
+      console.log('add');
+      add(details.ID);
       setFav(true);
     }
-  }
+  };
 
   return (
     <>
+     {loading ? <Loader/>  : null}
       <View style={styles.nameFlex}>
         <Text style={styles.nameText}>{details.AddressInfo.Title}</Text>
         <Text style={{marginTop: 2}}>OCM-{details.ID}</Text>
@@ -52,12 +87,15 @@ const handleState = () => {
           <Ionicons name="pin" color="white" size={15} />{' '}
           {details.AddressInfo.Latitude}, {details.AddressInfo.Longitude}
         </Text>
-        
+
         <View style={{alignItems: 'flex-end'}}>
-          <TouchableOpacity
-            onPress={handleState}>
+          <TouchableOpacity onPress={handleState}>
             <Text>
-            { !fav ? <Ionicons name="star-outline" color={Colors.white} size={20} /> : <Ionicons name="star" color={Colors.white} size={20} />}{' '}
+              {fav ? (
+                <Ionicons name="star" color={Colors.white} size={20} />
+              ) : (
+                <Ionicons name="star-outline" color={Colors.white} size={20} />
+              )}{' '}
               Favourites
             </Text>
           </TouchableOpacity>
@@ -71,7 +109,8 @@ const handleState = () => {
               name="battery-charging-sharp"
               size={16}
               color={Colors.primary}
-            />{'  '}
+            />
+            {'  '}
             Equipment Details
           </Text>
           <Text
@@ -83,27 +122,34 @@ const handleState = () => {
             }}>
             Number Of Stations/Bays: {details.Connections.length}
           </Text>
-          
+
           <View style={{marginTop: 10}}>
             {details.Connections.map((item, index) => (
               <View key={index} style={styles.listVieContainer}>
                 <Text style={styles.listViewItemTitle}>
-                {item.StatusType ? item.StatusType.IsOperational ? <Ionicons name="checkbox" color='green' size={15}/>: <Ionicons name="checkbox" color='red' size={15}/> : null}
+                  {item.StatusType ? (
+                    item.StatusType.IsOperational ? (
+                      <Ionicons name="checkbox" color="green" size={15} />
+                    ) : (
+                      <Ionicons name="checkbox" color="red" size={15} />
+                    )
+                  ) : null}
                   {item.ConnectionType.Title} : {item.Quantity}
                 </Text>
-                <Text
-                  style={styles.listViewItemSubTitle}>
-                 { item.ConnectionType.FormalName}
+                <Text style={styles.listViewItemSubTitle}>
+                  {item.ConnectionType.FormalName}
                 </Text>
-                
-                {item.CurrentType? <Text
-                  style={styles.listViewItemSubTitle}>
-                  {item.CurrentType.Title}, {item.PowerKW} kW
-                </Text>: null}
-               { item.Amps || item.Voltage ? <Text
-                  style={styles.listViewItemSubTitle}>
-                   {item.Amps}A {item.Voltage}V
-                </Text> :null}
+
+                {item.CurrentType ? (
+                  <Text style={styles.listViewItemSubTitle}>
+                    {item.CurrentType.Title}, {item.PowerKW} kW
+                  </Text>
+                ) : null}
+                {item.Amps || item.Voltage ? (
+                  <Text style={styles.listViewItemSubTitle}>
+                    {item.Amps}A {item.Voltage}V
+                  </Text>
+                ) : null}
               </View>
             ))}
           </View>
@@ -111,65 +157,98 @@ const handleState = () => {
 
         <View style={styles.contentFlex}>
           <Text style={styles.boxHeading}>
-            <Ionicons name="book-sharp" color={Colors.primary} size={16} />{'  '}
+            <Ionicons name="book-sharp" color={Colors.primary} size={16} />
+            {'  '}
             Usage Restrictions
           </Text>
-          <Text style={{
+          <Text
+            style={{
               marginTop: 5,
               color: Colors.black,
               fontSize: 12,
-              fontWeight: 'bold'}}>
-            Usage : 
+              fontWeight: 'bold',
+            }}>
+            Usage :
           </Text>
-         {details.UsageType? <Text style={styles.listViewItemSubTitle}>{details.UsageType.Title }</Text>: null}
-          {details.UsageCost ?  (<><Text style={{
-              marginTop: 5,
-              color: Colors.black,
-              fontSize: 12,
-              fontWeight: 'bold'}}>
-            Usage Cost : 
-          </Text>
-        <Text style={styles.listViewItemSubTitle}>{details.UsageCost }</Text></>)
-          : null}
+          {details.UsageType ? (
+            <Text style={styles.listViewItemSubTitle}>
+              {details.UsageType.Title}
+            </Text>
+          ) : null}
+          {details.UsageCost ? (
+            <>
+              <Text
+                style={{
+                  marginTop: 5,
+                  color: Colors.black,
+                  fontSize: 12,
+                  fontWeight: 'bold',
+                }}>
+                Usage Cost :
+              </Text>
+              <Text style={styles.listViewItemSubTitle}>
+                {details.UsageCost}
+              </Text>
+            </>
+          ) : null}
 
-    {details.UserComments ?  (<><Text style={{
-              marginTop: 5,
-              color: Colors.black,
-              fontSize: 12,
-              fontWeight: 'bold'}}>
-            Comments : 
-          </Text>
-        <Text style={styles.UserComments}>{details.UserComments }</Text></>)
-          : null}
-
+          {details.UserComments ? (
+            <>
+              <Text
+                style={{
+                  marginTop: 5,
+                  color: Colors.black,
+                  fontSize: 12,
+                  fontWeight: 'bold',
+                }}>
+                Comments :
+              </Text>
+              <Text style={styles.UserComments}>{details.UserComments}</Text>
+            </>
+          ) : null}
         </View>
 
         <View style={styles.contentFlex}>
           <Text style={styles.boxHeading}>
-          <FontAwesome name="bolt" size={18} color={Colors.primary} />{'  '}
+            <FontAwesome name="bolt" size={18} color={Colors.primary} />
+            {'  '}
             Network/Operator
           </Text>
-         { details.OperatorInfo ? <><Text style={{marginTop: 10, color:Colors.black , fontSize: 12}}>
-            {details.OperatorInfo.Title}
-          </Text>
-          <Text style={{marginTop: 10, color:Colors.black , fontSize: 12}}>
-          <Ionicons name="link" size={14} color={Colors.primary} />{'  '}{details.OperatorInfo.WebsiteURL}
-          </Text></> : null}
+          {details.OperatorInfo ? (
+            <>
+              <Text style={{marginTop: 10, color: Colors.black, fontSize: 12}}>
+                {details.OperatorInfo.Title}
+              </Text>
+              <Text style={{marginTop: 10, color: Colors.black, fontSize: 12}}>
+                <Ionicons name="link" size={14} color={Colors.primary} />
+                {'  '}
+                {details.OperatorInfo.WebsiteURL}
+              </Text>
+            </>
+          ) : null}
         </View>
 
         <View style={styles.contentFlex}>
           <Text style={styles.boxHeading}>
-          <Ionicons name="information-circle-sharp" size={16} color={Colors.primary} />{'  '}
-           Additional Information
+            <Ionicons
+              name="information-circle-sharp"
+              size={16}
+              color={Colors.primary}
+            />
+            {'  '}
+            Additional Information
           </Text>
-          {details.GeneralComments? <Text style={{marginTop: 10, color:Colors.black, fontSize: 12}}>
-            {details.GeneralComments}
-          </Text>: null}
+          {details.GeneralComments ? (
+            <Text style={{marginTop: 10, color: Colors.black, fontSize: 12}}>
+              {details.GeneralComments}
+            </Text>
+          ) : null}
 
-          {details.AddressInfo.AccessComments? <Text style={{marginTop: 10, color:Colors.black, fontSize: 12}}>
-            {details.AddressInfo.AccessComments}
-          </Text>: null}
-          
+          {details.AddressInfo.AccessComments ? (
+            <Text style={{marginTop: 10, color: Colors.black, fontSize: 12}}>
+              {details.AddressInfo.AccessComments}
+            </Text>
+          ) : null}
         </View>
       </ScrollView>
     </>
@@ -217,15 +296,15 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     marginTop: 10,
   },
-  listViewItemTitle:{
+  listViewItemTitle: {
     fontSize: 14,
     color: Colors.primary,
     fontWeight: 'bold',
   },
-  listViewItemSubTitle:{
+  listViewItemSubTitle: {
     fontSize: 10,
     color: Colors.black,
     fontWeight: 'normal',
     marginTop: 4,
-  }
+  },
 });
