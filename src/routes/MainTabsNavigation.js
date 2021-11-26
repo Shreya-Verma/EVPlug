@@ -15,7 +15,7 @@ const MainTabsNavigation = () => (
     tabBarIcon: ({ focused, color }) => {
       let iconName;
       if (route.name === 'HomeStack') {
-        iconName = focused ? 'home' : 'home-outline';
+        iconName = focused ? 'map-sharp' : 'map-outline';
       } else if (route.name === 'FavStack') {
         iconName = focused ? 'star' : 'star-outline';
       }else if(route.name === 'ProfileStack'){

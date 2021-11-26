@@ -14,20 +14,20 @@ import { useNavigation } from '@react-navigation/native';
 
 import Colors from '../constants/Colors';
 import LinearGradient from 'react-native-linear-gradient';
-import Loader from './Loader';
+
 
 const AuthForm = ({errorMessage, submitButtonText, onSubmit, text, routeName }) => {
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+
 
   const navigation = useNavigation();
 
   const doSubmit = async () =>{
-      setLoading(true);
+      
       await onSubmit({email, password});
-      setLoading(false);
+      
   }
 
     return (
@@ -102,7 +102,7 @@ const AuthForm = ({errorMessage, submitButtonText, onSubmit, text, routeName }) 
             </TouchableOpacity>
           </View>
         </ScrollView>
-        { loading ? <Loader/> : null}
+        
 
       </Animatable.View>
     )

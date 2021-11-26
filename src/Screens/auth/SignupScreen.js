@@ -6,12 +6,23 @@ import Colors from '../../constants/Colors';
 import AuthScreenHeader from '../../components/AuthScreenHeader';
 import AuthForm from '../../components/AuthForm';
 import { Context } from '../../context/AuthContext';
+import { useIsFocused } from '@react-navigation/native';
 
 const SignupScreen = ({navigation}) => {
 
   const {state, signup, clearErrorMessage} = useContext(Context);
-  useEffect(() => navigation.addListener('blur', clearErrorMessage),[navigation]);
-  useEffect(() => navigation.addListener('focus', clearErrorMessage),[navigation]);
+
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    const getFocus = async()=>{
+      clearErrorMessage();
+    }
+    if(isFocused){
+      getFocus();
+    }
+    
+},[isFocused]);
 
   return (
     <SafeAreaView style={styles.container}>

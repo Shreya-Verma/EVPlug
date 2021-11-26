@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import {View, Text, StatusBar, StyleSheet} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import EncryptedStorage from 'react-native-encrypted-storage';
+
 
 import Colors from '../constants/Colors';
 import OCMApi from '../api/OCMApi';

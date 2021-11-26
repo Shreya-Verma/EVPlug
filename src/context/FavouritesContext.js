@@ -2,6 +2,7 @@ import createDataContext from './createDataContext';
 import auth from '../api/auth';
 import EncryptedStorage from 'react-native-encrypted-storage';
 
+
 const favouriteReducer = (state, action) => {
   switch (action.type) {
     case 'dblist':
@@ -14,7 +15,8 @@ const favouriteReducer = (state, action) => {
 
 const addToFav = dispatch => async (ocmid) => {
   try {
-    const token = await EncryptedStorage.getItem('token');
+    const authData = await EncryptedStorage.getItem("authData");
+    const {token} = JSON.parse(authData);
     await auth
       .post(
         '/evplug/addFav',
@@ -36,7 +38,8 @@ const addToFav = dispatch => async (ocmid) => {
 
 const removeFromFav = dispatch => async (ocmid) => {
   try {
-    const token = await EncryptedStorage.getItem('token');
+    const authData = await EncryptedStorage.getItem("authData");
+    const {token} = JSON.parse(authData);
     await auth
       .post(
         '/evplug/remove',

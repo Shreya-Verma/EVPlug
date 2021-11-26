@@ -10,13 +10,13 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useIsFocused} from '@react-navigation/native';
-import EncryptedStorage from 'react-native-encrypted-storage';
 
 import Colors from '../constants/Colors';
 import {Context as FavouritesContext} from '../context/FavouritesContext';
 import OCMApi from '../api/OCMApi';
 import auth from '../api/auth';
 import Loader from '../components/Loader';
+import { Context as AuthContext } from '../context/AuthContext';
 
 const FavouritesScreen = () => {
   const {removeFromFav} = useContext(FavouritesContext);
@@ -25,18 +25,17 @@ const FavouritesScreen = () => {
   const [dbList, setDBList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-
+  const {state:{authData}} = useContext(AuthContext);
   const isFocused = useIsFocused();
 
   useEffect(() => {
     const getDBList = async () => {
       setLoading(true);
       try {
-        const token = await EncryptedStorage.getItem('token');
         await auth
           .get('/evplug/getFav', {
             headers: {
-              Authorization: 'Bearer ' + token,
+              Authorization: 'Bearer ' + authData.token,
             },
           })
           .then(resp => {

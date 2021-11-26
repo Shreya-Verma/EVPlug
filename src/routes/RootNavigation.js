@@ -9,15 +9,15 @@ import {Context as AuthContext} from '../context/AuthContext';
 
 const RootNavigation = () => {
 
-  const {state:{token}, restoreToken} = useContext(AuthContext);
+  const {state:{authData}, restoreToken} = useContext(AuthContext);
   const [initializing, setInitalizing] = useState(true);
 
   useEffect(() => {
     const onAuthStateChanged = async () => {
-      await EncryptedStorage.getItem('token')
+      await EncryptedStorage.getItem('authData')
         .then(resp => {
           if (resp) {
-            restoreToken(resp);
+            restoreToken(JSON.parse(resp));
           }
           setInitalizing(false);
         })
@@ -26,7 +26,7 @@ const RootNavigation = () => {
         });
     };
     onAuthStateChanged();
-  }, [token]);
+  }, [authData.token]);
 
   if (initializing) {
     return <Loader />;
@@ -34,7 +34,7 @@ const RootNavigation = () => {
 
   return (
     <NavigationContainer>
-      {!token ? <AuthNavigation /> : <MainTabsNavigation />}
+      {!authData.token ? <AuthNavigation /> : <MainTabsNavigation />}
     </NavigationContainer>
   );
 };

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   View,
   Text,
@@ -10,23 +10,24 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Colors from '../constants/Colors';
 import auth from '../api/auth';
-import EncryptedStorage from 'react-native-encrypted-storage';
 import Loader from './Loader';
+import { Context as AuthContext } from '../context/AuthContext';
 
 const Details = ({details, add, remove}) => {
 
   const [fav, setFav] = useState(false);
   const [loading,setLoading] = useState(false);
+  const {state:{authData}} = useContext(AuthContext);
 
   useEffect(() => {
     const getDBList = async () => {
       setLoading(true);
       try {
-        const token = await EncryptedStorage.getItem('token');
+        
         await auth
           .get('/evplug/getFav', {
             headers: {
-              Authorization: 'Bearer ' + token,
+              Authorization: 'Bearer ' + authData.token,
             },
           })
           .then(resp => {
@@ -53,12 +54,8 @@ const Details = ({details, add, remove}) => {
 
   const handleState = () => {
     if (fav) {
-      console.log('remove');
       remove(details.ID);
-     
     } else {
-      // Add to list
-      console.log('add');
       add(details.ID);
       setFav(true);
     }
@@ -69,28 +66,28 @@ const Details = ({details, add, remove}) => {
      {loading ? <Loader/>  : null}
       <View style={styles.nameFlex}>
         <Text style={styles.nameText}>{details.AddressInfo.Title}</Text>
-        <Text style={{marginTop: 2}}>OCM-{details.ID}</Text>
-        <Text>
+        <Text style={{marginTop: 2, color: Colors.white}}>OCM-{details.ID}</Text>
+        <Text style={{color: Colors.white}}>
           {details.AddressInfo.AddressLine1}, {details.AddressInfo.Town},{' '}
           {details.AddressInfo.StateOrProvince}
         </Text>
-        <Text>
+        <Text style={{color: Colors.white}}>
           {details.AddressInfo.Country.ISOCode}, {details.AddressInfo.Postcode}
         </Text>
         {details.AddressInfo.ContactTelephone1 ? (
-          <Text>
+          <Text style={{color: Colors.white}}>
             <Ionicons name="call-outline" color="white" size={15} />{' '}
             {details.AddressInfo.ContactTelephone1}
           </Text>
         ) : null}
-        <Text>
+        <Text style={{color: Colors.white}}>
           <Ionicons name="pin" color="white" size={15} />{' '}
           {details.AddressInfo.Latitude}, {details.AddressInfo.Longitude}
         </Text>
 
         <View style={{alignItems: 'flex-end'}}>
           <TouchableOpacity onPress={handleState}>
-            <Text>
+            <Text style={{color: Colors.white}}>
               {fav ? (
                 <Ionicons name="star" color={Colors.white} size={20} />
               ) : (
@@ -262,6 +259,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.detailsBannerGreen,
     height: 200,
     padding: 10,
+   
+    
   },
   nameText: {
     fontSize: 16,

@@ -7,11 +7,11 @@ const authReducer = (state, action) => {
     case 'signin':
       return {
         errorMessage: '',
-        token: action.payload,
+        authData : { token: action.payload.token, email: action.payload.email}
       };
     case 'signout':
       return {
-        token: null,
+        authData : { token: null, email: ''},
         errorMessage: '',
       };
     case 'add_error':
@@ -37,8 +37,8 @@ const signup =
         email,
         password,
       });
-      await EncryptedStorage.setItem('token',response.data.token);
-      dispatch({type: 'signin', payload: response.data.token});
+      await EncryptedStorage.setItem('token',JSON.stringify(response.data));
+      dispatch({type: 'signin', payload: response.data});
     } catch (err) {
       if (err.error === 'auth/operation-not-allowed') {
         dispatch({
@@ -80,8 +80,8 @@ const signin =
         password,
       });
       console.log(response);
-      await EncryptedStorage.setItem('token',response.data.token);
-      dispatch({type: 'signin', payload: response.data.token});
+      await EncryptedStorage.setItem('authData',JSON.stringify(response.data));
+      dispatch({type: 'signin', payload: response.data});
     } catch (err) {
       if (err.error === 'auth/operation-not-allowed') {
         dispatch({
@@ -117,7 +117,7 @@ const signin =
 
 const signout = dispatch => async () => {
   try {
-      await EncryptedStorage.removeItem("token");
+      await EncryptedStorage.removeItem("authData");
       dispatch({type: 'signout'});
   } catch (error) {
     console.log("native",error);
@@ -128,15 +128,15 @@ const clearErrorMessage = dispatch => () => {
   dispatch({type: 'clear_error_message'});
 };
 
-const restoreToken = dispatch => (token) => {
-  dispatch({type: 'signin', payload: token});
+const restoreToken = dispatch => (data) => {
+  dispatch({type: 'signin', payload: data});
 };
 
 export const {Context, Provider} = createDataContext(
   authReducer,
   {signup, signin, signout, clearErrorMessage, restoreToken},
   {
-    token: null,
+    authData: { token: null, email: ''}, 
     errorMessage: ''
   },
 );
