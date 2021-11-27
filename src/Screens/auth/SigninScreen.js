@@ -9,7 +9,7 @@ import { Context as AuthContext } from '../../context/AuthContext';
 import { useIsFocused } from '@react-navigation/native';
 
 
-const SigninScreen = ({navigation}) => {
+const SigninScreen = () => {
   const {state, signin, clearErrorMessage} = useContext(AuthContext);
   const isFocused = useIsFocused();
 

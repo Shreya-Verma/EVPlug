@@ -9,15 +9,15 @@ import {
 import {TextInput, HelperText} from 'react-native-paper';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Colors from '../constants/Colors';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Context as AuthContext} from '../context/AuthContext';
 import Loader from '../components/Loader';
-import auth from '../api/auth';
+import appApi from '../api/appApi';
 import { useIsFocused } from '@react-navigation/native';
 
 
 const ProfileEditScreen = ({route, navigation}) => {
-  const [errorMessage, setErrorMessage] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [success, setSuccess] = useState(false);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [phoneNumber, setPhone] = useState('');
@@ -38,28 +38,20 @@ const ProfileEditScreen = ({route, navigation}) => {
     }
   }, [isFocused]);
 
-  const {
-    state: {authData},
-  } = useContext(AuthContext);
 
   const doSubmit = async () => {
     setLoading(true);
     try {
-    
-    const response = await auth.post('/evplug/update',
-                {firstName, lastName, phoneNumber},
-                {headers: {Authorization: 'Bearer ' + authData.token}});
-      if(response.data){
-        console.log(response);
-        // setFirstName(profile.firstName);
-        // setLastName(profile.lastName);
-        // setPhone(profile.phoneNumber.toString());
-      }
+      const response = await appApi.post('/evplug/update',{firstName, lastName, phoneNumber});
+        setFirstName(response.data.firstName);
+        setLastName(response.data.lastName);
+        setPhone(response.data.phoneNumber.toString());
+        setSuccess(true);
     } catch (err) {
-        console.log('in error', err.error);
-       // setErrorMessage(err)
+        if(err && err.error){
+          setErrorMessage(err.error);
+      }
     }
-
     setLoading(false);
   };
   return (
@@ -105,13 +97,18 @@ const ProfileEditScreen = ({route, navigation}) => {
           autoCapitalize="none"
           autoCorrect={false}
           onChangeText={setPhone}
-          keyboardType="number-pad"
+          maxLength={10}
+          keyboardType="phone-pad"
         />
       </View>
       <View style={styles.save}>
         {errorMessage ? (
           <HelperText style={{color: 'red', margin: 5}}>{errorMessage}</HelperText>
         ) : null}
+         {success ? (
+          <HelperText style={{color: 'green', margin: 5}}>Profile Updated!</HelperText>
+        ) : null}
+       
         <TouchableOpacity onPress={doSubmit} style={styles.button}>
           <Text
             style={{

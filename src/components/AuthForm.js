@@ -10,24 +10,17 @@ import {
 import * as Animatable from 'react-native-animatable';
 import {HelperText, TextInput} from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-
-
 import Colors from '../constants/Colors';
 import LinearGradient from 'react-native-linear-gradient';
-
 
 const AuthForm = ({errorMessage, submitButtonText, onSubmit, text, routeName }) => {
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-
   const navigation = useNavigation();
 
   const doSubmit = async () =>{
-      
       await onSubmit({email, password});
-      
   }
 
     return (

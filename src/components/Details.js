@@ -9,44 +9,33 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Colors from '../constants/Colors';
-import auth from '../api/auth';
+import appApi from '../api/appApi';
 import Loader from './Loader';
-import { Context as AuthContext } from '../context/AuthContext';
+
 
 const Details = ({details, add, remove}) => {
 
   const [fav, setFav] = useState(false);
   const [loading,setLoading] = useState(false);
-  const {state:{authData}} = useContext(AuthContext);
+  const [err, setErr] = useState(null);
 
   useEffect(() => {
     const getDBList = async () => {
       setLoading(true);
       try {
-        
-        await auth
-          .get('/evplug/getFav', {
-            headers: {
-              Authorization: 'Bearer ' + authData.token,
-            },
-          })
-          .then(resp => {
-            const list = resp.data[0].fav;
-            if(list.includes(details.ID)){
-              setFav(true);
-            }
-          })
-          .catch(err => {
-            console.log("error")
-          });
+        const response = await appApi.get('/evplug/getFav');
+        if(response && response.data.length > 0 ){
+          const list = response.data[0].fav;
+          if(list.includes(details.ID)){
+            setFav(true);
+          }
+        }
       } catch (err) {
-        console.log("error")
+        console.log(err);
       }
       setLoading(false);
     };
-
     getDBList();
-
   }, [fav]);
   
 

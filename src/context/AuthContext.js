@@ -1,6 +1,6 @@
+import EncryptedStorage from 'react-native-encrypted-storage';
 import createDataContext from './createDataContext';
 import auth from '../api/auth';
-import EncryptedStorage from 'react-native-encrypted-storage';
 
 const authReducer = (state, action) => {
   switch (action.type) {
@@ -111,8 +111,6 @@ const signin =
       }
     }
   };
-
-
 
 
 const signout = dispatch => async () => {

@@ -1,4 +1,4 @@
-import React, {useState, useContext, useEffect} from 'react';
+import React, {useContext, useEffect} from 'react';
 import { StyleSheet,StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -8,7 +8,7 @@ import AuthForm from '../../components/AuthForm';
 import { Context } from '../../context/AuthContext';
 import { useIsFocused } from '@react-navigation/native';
 
-const SignupScreen = ({navigation}) => {
+const SignupScreen = () => {
 
   const {state, signup, clearErrorMessage} = useContext(Context);
 

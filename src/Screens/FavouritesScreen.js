@@ -14,9 +14,9 @@ import {useIsFocused} from '@react-navigation/native';
 import Colors from '../constants/Colors';
 import {Context as FavouritesContext} from '../context/FavouritesContext';
 import OCMApi from '../api/OCMApi';
-import auth from '../api/auth';
+import appApi from '../api/appApi';
 import Loader from '../components/Loader';
-import { Context as AuthContext } from '../context/AuthContext';
+
 
 const FavouritesScreen = () => {
   const {removeFromFav} = useContext(FavouritesContext);
@@ -24,29 +24,21 @@ const FavouritesScreen = () => {
   const [list, setList] = useState([]);
   const [dbList, setDBList] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-  const {state:{authData}} = useContext(AuthContext);
+  const [error, setError] = useState(null);
   const isFocused = useIsFocused();
 
   useEffect(() => {
     const getDBList = async () => {
       setLoading(true);
       try {
-        await auth
-          .get('/evplug/getFav', {
-            headers: {
-              Authorization: 'Bearer ' + authData.token,
-            },
-          })
-          .then(resp => {
-            
-            setDBList(resp.data[0].fav);
-          })
-          .catch(err => {
-            setError(true);
-          });
+        const response = await appApi.get('/evplug/getFav');
+        if(response && response.data.length>0){
+          setDBList(response.data[0].fav);
+        }
       } catch (err) {
-        setError(true);
+        if(err.error){
+          setError(err.error);
+        }
       }
       setLoading(false);
     };
@@ -60,15 +52,12 @@ const FavouritesScreen = () => {
     const getChargingPointDetails = async () => {
       setLoading(true);
       try {
-        await OCMApi.get(`/poi?output=json&chargepointid=${dbList.join()}`)
-          .then(resp => {
-            setList(resp.data);
-          })
-          .catch(error => {
-            setError(true);
-          });
+        const response = await OCMApi.get(`/poi?output=json&chargepointid=${dbList.join()}`);
+        if(response && response.data){
+          setList(response.data);
+        }
       } catch (err) {
-        setError(true);
+        setError("Error fetching favourites!");
       }
       setLoading(false);
     };
@@ -78,19 +67,22 @@ const FavouritesScreen = () => {
     }
   }, [dbList]);
 
-  const handlePress = async id => {
+  const handlePress = async (id) => {
     setLoading(true);
-    await removeFromFav(id)
-      .then(response => {
+    try{
+      const response = await removeFromFav(id);
+      if(response){
         setRemove(id);
-      })
-      .catch(error => {
-        setError(true);
-      });
+      }
+    }catch(err){
+      if(err.error){
+        setError(err.error);
+      }
+    }
     setLoading(false);
   };
 
-  const renderBasic = () => {
+  const renderBasic = ({error}) => {
     return (
       <View
         style={{
@@ -100,7 +92,7 @@ const FavouritesScreen = () => {
           alignItems: 'center',
         }}>
         <Text style={{color: 'black', fontSize: 16, fontWeight: 'bold'}}>
-          No Favourites added
+          {error ? error : `No Favourites added`}
         </Text>
       </View>
     );
@@ -152,7 +144,7 @@ const FavouritesScreen = () => {
       {list.length > 0 ? (
         <ScrollView>{list.map(item => renderList({item}))}</ScrollView>
       ) : (
-        renderBasic()
+        renderBasic({error})
       )}
     </SafeAreaView>
   );

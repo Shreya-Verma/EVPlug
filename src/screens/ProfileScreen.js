@@ -13,7 +13,7 @@ import Colors from '../constants/Colors';
 import {Context as AuthContext} from '../context/AuthContext';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import auth from '../api/auth';
+import appApi from '../api/appApi';
 import Loader from '../components/Loader';
 import {useIsFocused} from '@react-navigation/native';
 
@@ -26,29 +26,27 @@ const ProfileScreen = ({navigation}) => {
   const [avatar, setAvatar] = useState('AA');
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(false);
-  const isFocused = useIsFocused();
+  const [errorMessage, setErrorMessage] = useState(null);
 
+  const isFocused = useIsFocused();
+  
   useEffect(() => {
     setLoading(true);
     const getUserData = async () => {
       try {
-        await auth
-          .get('/evplug/details', {
-            headers: {Authorization: 'Bearer ' + authData.token},
-          })
-          .then(response => {
-            if (response.data !== null || response.data.length > 0) {
+        const response = await appApi.get('/evplug/details');
+          if(response.data !== null && response.data.length > 0) {
               console.log(response.data[0]);
               setProfile(response.data[0]);
               const intials = nameToInitials(`${response.data[0].firstName} ${response.data[0].lastName}`);
               setAvatar(intials);
-            }
-          })
-          .catch(err => {
-            console.log('in error');
-          });
+          }else{
+            setErrorMessage("You haven't added any details!");
+          }
       } catch (err) {
-        console.log('in error');
+          if(err.error){
+            setErrorMessage(err.error);
+          }
       }
       setLoading(false);
     };
@@ -104,7 +102,7 @@ const ProfileScreen = ({navigation}) => {
     );
   };
 
-  const renderBasic = () => {
+  const renderBasic = ({errorMessage}) => {
     return (
       <View
         style={{
@@ -117,7 +115,7 @@ const ProfileScreen = ({navigation}) => {
         }}>
         <Text style={{fontSize: 16, fontWeight: '500', color: Colors.black}}>
           {' '}
-          You haven't added any details!
+          {errorMessage}
         </Text>
         <TouchableOpacity
           style={{backgroundColor: Colors.primary}}
@@ -154,7 +152,7 @@ const ProfileScreen = ({navigation}) => {
         <Text style={styles.email}>{authData.email}</Text>
       </View>
 
-      {profile !== null ? renderProfile({profile}) : renderBasic()}
+      {profile && !errorMessage ? renderProfile({profile}) : renderBasic({errorMessage})}
 
       <View style={styles.signout}>
         <TouchableOpacity onPress={signout} style={styles.button}>

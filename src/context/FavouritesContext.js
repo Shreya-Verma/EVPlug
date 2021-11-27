@@ -1,7 +1,5 @@
 import createDataContext from './createDataContext';
-import auth from '../api/auth';
-import EncryptedStorage from 'react-native-encrypted-storage';
-
+import appApi from '../api/appApi';
 
 const favouriteReducer = (state, action) => {
   switch (action.type) {
@@ -12,51 +10,18 @@ const favouriteReducer = (state, action) => {
   }
 };
 
-
 const addToFav = dispatch => async (ocmid) => {
-  try {
-    const authData = await EncryptedStorage.getItem("authData");
-    const {token} = JSON.parse(authData);
-    await auth
-      .post(
-        '/evplug/addFav',
-        {ocmid: ocmid},
-        {headers: {Authorization: 'Bearer ' + token}},
-      )
-      .then(response => {
-        if (response !== null) {
-          dispatch({type: 'dblist', payload: response.data.fav});
-        }
-      })
-      .catch(err => {
-        console.log('in error');
-      });
-  } catch (err) {
-    console.log('in error');
-  }
+    const response = await appApi.post('/evplug/addFav',{ocmid: ocmid});
+    if (response !== null) {
+      dispatch({type: 'dblist', payload: response.data.fav});
+    }
 };
 
 const removeFromFav = dispatch => async (ocmid) => {
-  try {
-    const authData = await EncryptedStorage.getItem("authData");
-    const {token} = JSON.parse(authData);
-    await auth
-      .post(
-        '/evplug/remove',
-        {ocmid: ocmid},
-        {headers: {Authorization: 'Bearer ' + token}},
-      )
-      .then(response => {
-        if (response !== null) {
-          dispatch({type: 'dblist', payload: response.data.fav});
-        }
-      })
-      .catch(err => {
-        console.log('in error');
-      });
-  } catch (err) {
-    console.log('in error');
-  }
+    const response = await appApi.post('/evplug/remove',{ocmid: ocmid});
+    if (response !== null) {
+      dispatch({type: 'dblist', payload: response.data.fav});
+    }
 };
 
 
