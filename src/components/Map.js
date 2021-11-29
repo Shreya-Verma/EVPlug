@@ -77,6 +77,7 @@ const Map = ({fetchChargingStations, searchedRegion, chargingStations}) => {
 
   return (
     <MapView
+      provider={PROVIDER_GOOGLE}
       style={styles.map}
       initialRegion={{
         latitude: 37.773972,

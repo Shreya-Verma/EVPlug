@@ -79,7 +79,7 @@ const signin =
         email,
         password,
       });
-      console.log(response);
+     
       await EncryptedStorage.setItem('authData',JSON.stringify(response.data));
       dispatch({type: 'signin', payload: response.data});
     } catch (err) {

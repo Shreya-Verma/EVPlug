@@ -11,17 +11,28 @@ const favouriteReducer = (state, action) => {
 };
 
 const addToFav = dispatch => async (ocmid) => {
-    const response = await appApi.post('/evplug/addFav',{ocmid: ocmid});
-    if (response !== null) {
-      dispatch({type: 'dblist', payload: response.data.fav});
+    try{
+      const response = await appApi.post('/evplug/addFav',{ocmid: ocmid});
+      if (response !== null) {
+        dispatch({type: 'dblist', payload: response.data.fav});
+      }
+    }catch(err){
+      console.log(err);
     }
+    
 };
 
 const removeFromFav = dispatch => async (ocmid) => {
+  try{
     const response = await appApi.post('/evplug/remove',{ocmid: ocmid});
     if (response !== null) {
       dispatch({type: 'dblist', payload: response.data.fav});
     }
+
+  }catch(err){
+    console.log(err);
+  }
+    
 };
 
 

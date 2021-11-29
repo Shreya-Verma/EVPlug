@@ -13,6 +13,7 @@ const App = () => {
     SplashScreen.hide();
   }, []);
 
+
   return (
     <AuthProvider>
       <LocationProvider>

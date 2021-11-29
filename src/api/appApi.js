@@ -3,13 +3,13 @@ import CONFIG from "../../env.config";
 import EncryptedStorage from 'react-native-encrypted-storage';
 
 const appApi = axios.create({
-    baseURL: CONFIG.DEV_APP_API
+    baseURL: CONFIG.PROD_APP_API
 });
   
 appApi.interceptors.request.use(
 async (config) => {
     const authData = await EncryptedStorage.getItem("authData");
-    console.log(authData)
+
     const {token} = JSON.parse(authData);
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;

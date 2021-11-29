@@ -58,6 +58,5 @@ buck-out/
 
 # CocoaPods
 /ios/Pods/
+env.config.js
 
-#Environament variables with API key
-.env

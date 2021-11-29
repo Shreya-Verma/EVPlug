@@ -36,7 +36,7 @@ const ProfileScreen = ({navigation}) => {
       try {
         const response = await appApi.get('/evplug/details');
           if(response.data !== null && response.data.length > 0) {
-              console.log(response.data[0]);
+            
               setProfile(response.data[0]);
               const intials = nameToInitials(`${response.data[0].firstName} ${response.data[0].lastName}`);
               setAvatar(intials);

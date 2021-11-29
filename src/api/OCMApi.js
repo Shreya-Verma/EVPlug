@@ -9,12 +9,4 @@ const OCMApi =  axios.create({
     }
 });
 
-OCMApi.interceptors.response.use(
-    res => res,
-    err => {
-        console.log(err.response.data);
-        return Promise.reject(err.response.data);
-    }
-)
-
 export default OCMApi;
