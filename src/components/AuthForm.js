@@ -10,21 +10,28 @@ import {
 import * as Animatable from 'react-native-animatable';
 import {HelperText, TextInput} from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import Colors from '../constants/Colors';
 import LinearGradient from 'react-native-linear-gradient';
+import Colors from '../constants/Colors';
+import Loader from './Loader';
+
+
 
 const AuthForm = ({errorMessage, submitButtonText, onSubmit, text, routeName }) => {
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
 
   const doSubmit = async () =>{
-      await onSubmit({email, password});
+        setLoading(true);
+        await onSubmit({email, password});
+        setLoading(false);
   }
 
     return (
         <Animatable.View animation="fadeInUpBig" style={styles.footer}>
+        {loading ? <Loader/> : null}
         <ScrollView>
           <View style={styles.inputBoxesView}>
             <TextInput

@@ -9,11 +9,10 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Colors from '../constants/Colors';
-import appApi from '../api/appApi';
 import Loader from './Loader';
 
 
-const Details = ({details, add, remove}) => {
+const Details = ({details, errorMessage, list, getFav , add, remove}) => {
 
   const [fav, setFav] = useState(false);
   const [loading,setLoading] = useState(false);
@@ -22,31 +21,37 @@ const Details = ({details, add, remove}) => {
   useEffect(() => {
     const getDBList = async () => {
       setLoading(true);
-      try {
-        const response = await appApi.get('/evplug/getFav');
-        if(response && response.data.length > 0 ){
-          const list = response.data[0].fav;
+      await getFav();
+      if(!errorMessage){
+        if(list && list.length >= 0){
           if(list.includes(details.ID)){
             setFav(true);
           }
         }
-      } catch (err) {
-        console.log(err);
+      }else{
+        setErr(errorMessage);
       }
       setLoading(false);
     };
     getDBList();
   }, [fav]);
   
-
-
-
-  const handleState = () => {
+  const handleState = async () => {
     if (fav) {
-      remove(details.ID);
+       await remove(details.ID);
+      if(!errorMessage){
+        setFav(false);
+      }else{
+        setErr(errorMessage);
+      }
+      
     } else {
-      add(details.ID);
-      setFav(true);
+       await add(details.ID);
+      if(!errorMessage){
+        setFav(true);
+      }else{
+        setErr(errorMessage);
+      }
     }
   };
 

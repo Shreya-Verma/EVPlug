@@ -14,15 +14,15 @@ import {useIsFocused} from '@react-navigation/native';
 import Colors from '../constants/Colors';
 import {Context as FavouritesContext} from '../context/FavouritesContext';
 import OCMApi from '../api/OCMApi';
-import appApi from '../api/appApi';
 import Loader from '../components/Loader';
 
 
 const FavouritesScreen = () => {
-  const {removeFromFav} = useContext(FavouritesContext);
+  const {state, getFav , removeFromFav} = useContext(FavouritesContext);
+
   const [remove, setRemove] = useState(0);
   const [list, setList] = useState([]);
-  const [dbList, setDBList] = useState([]);
+  const [secondaryDBList, setSecondaryDBList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const isFocused = useIsFocused();
@@ -30,19 +30,19 @@ const FavouritesScreen = () => {
   useEffect(() => {
     const getDBList = async () => {
       setLoading(true);
-      try {
-        const response = await appApi.get('/evplug/getFav');
-        if(response && response.data.length>0){
-          setDBList(response.data[0].fav);
+        await getFav();
+        if(!state.errorMessage){
+          if(state.dbFavList){
+            setSecondaryDBList(state.dbFavList);
+          }else{
+            setSecondaryDBList([]);
+          }
+        }else{
+          //set error
+          setError(state.errorMessage);
         }
-      } catch (err) {
-        if(err.error){
-          setError(err.error);
-        }
-      }
       setLoading(false);
     };
-
     if (isFocused || remove > 0) {
       getDBList();
     }
@@ -52,7 +52,7 @@ const FavouritesScreen = () => {
     const getChargingPointDetails = async () => {
       setLoading(true);
       try {
-        const response = await OCMApi.get(`/poi?output=json&chargepointid=${dbList.join()}`);
+        const response = await OCMApi.get(`/poi?output=json&chargepointid=${secondaryDBList.join()}`);
         if(response && response.data){
           setList(response.data);
         }
@@ -62,22 +62,21 @@ const FavouritesScreen = () => {
       setLoading(false);
     };
 
-    if (dbList.length > 0) {
+    if (secondaryDBList.length > 0) {
       getChargingPointDetails();
+    }else{
+      setList([]);
     }
-  }, [dbList]);
+  }, [secondaryDBList]);
 
   const handlePress = async (id) => {
     setLoading(true);
-    try{
-      const response = await removeFromFav(id);
-      if(response){
-        setRemove(id);
-      }
-    }catch(err){
-      if(err.error){
-        setError(err.error);
-      }
+    await removeFromFav(id);
+    if(!state.errorMessage){
+      setRemove(id);
+    }else{
+      // set error
+      setError(state.errorMessage);
     }
     setLoading(false);
   };

@@ -1,36 +1,43 @@
-import React, {useRef} from 'react';
-import {StyleSheet, View, Text} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {StyleSheet, View, Text, Platform} from 'react-native';
 import MapView, {PROVIDER_GOOGLE, Marker, Callout} from 'react-native-maps';
 import {useNavigation} from '@react-navigation/core';
 
 import Colors from '../constants/Colors';
 
+
 const LATITUDE_DELTA = 0.01;
 const LONGITUDE_DELTA = 0.01;
 
-const Map = ({fetchChargingStations, searchedRegion, chargingStations}) => {
-
+const Map = ({ fetchChargingStations, searchedRegion, chargingStations, currentLocation}) => {
   const navigation = useNavigation();
   const mapRef = useRef(null);
 
-  const regionChangePoiDetails = data => {
-    fetchChargingStations({latitude: data.latitude, longitude: data.longitude});
-  };
+console.log(currentLocation);
+const [location, setLocation] = useState({latitude: currentLocation.latitude, longitude:currentLocation.longitude});
 
-  if(searchedRegion){ 
+
+const regionChangePoiDetails = data => {
+  fetchChargingStations({latitude: data.latitude, longitude: data.longitude});
+};
+
+
+  if (searchedRegion) {
     if (mapRef.current) {
       const newCamera = {
-          center: { latitude: searchedRegion.latitude, longitude: searchedRegion.longitude },
-          zoom: 9,
-          heading: 0,
-          pitch: 0,
-          altitude: 5
-      }
-      mapRef.current.animateCamera(newCamera, { duration: 5000 });
+        center: {
+          latitude: searchedRegion.latitude,
+          longitude: searchedRegion.longitude,
+        },
+        zoom: 12,
+        heading: 0,
+        pitch: 0,
+        altitude: 5,
+      };
+      mapRef.current.animateCamera(newCamera, {duration: 2000});
     }
   }
 
-  
   const mapMarkers = () => {
     return chargingStations.map(details => (
       <Marker
@@ -44,7 +51,7 @@ const Map = ({fetchChargingStations, searchedRegion, chargingStations}) => {
           tooltip
           onPress={() => {
             navigation.navigate('Details', {
-              ocmid: details.ID
+              ocmid: details.ID,
             });
           }}>
           <View>
@@ -76,20 +83,23 @@ const Map = ({fetchChargingStations, searchedRegion, chargingStations}) => {
   };
 
   return (
-    <MapView
+     <MapView
       provider={PROVIDER_GOOGLE}
       style={styles.map}
       initialRegion={{
-        latitude: 37.773972,
-        longitude: -122.431297,
+        latitude: location.latitude,
+        longitude: location.longitude,
         latitudeDelta: LATITUDE_DELTA,
-        longitudeDelta: LONGITUDE_DELTA
+        longitudeDelta: LONGITUDE_DELTA,
       }}
-      ref={mapRef} 
+      ref={mapRef}
       showsCompass={true}
+      showsUserLocation={true}
+      showsMyLocationButton={true}
       onRegionChangeComplete={regionChangePoiDetails}>
       {chargingStations ? mapMarkers() : null}
     </MapView>
+   
   );
 };
 

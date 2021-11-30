@@ -5,12 +5,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Colors from '../../constants/Colors';
 import AuthScreenHeader from '../../components/AuthScreenHeader';
 import AuthForm from '../../components/AuthForm';
-import { Context } from '../../context/AuthContext';
+import { Context as AuthContext } from '../../context/AuthContext';
 import { useIsFocused } from '@react-navigation/native';
 
 const SignupScreen = () => {
 
-  const {state, signup, clearErrorMessage} = useContext(Context);
+  const {state, signup, clearErrorMessage} = useContext(AuthContext);
 
   const isFocused = useIsFocused();
 

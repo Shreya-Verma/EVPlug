@@ -11,7 +11,7 @@ const RootNavigation = () => {
 
   const {state:{authData}, restoreToken} = useContext(AuthContext);
   const [initializing, setInitalizing] = useState(true);
-
+ 
   useEffect(() => {
     const onAuthStateChanged = async () => {
       await EncryptedStorage.getItem('authData')

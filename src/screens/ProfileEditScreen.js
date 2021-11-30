@@ -40,13 +40,20 @@ const ProfileEditScreen = ({route, navigation}) => {
 
 
   const doSubmit = async () => {
+    setErrorMessage(null);
     setLoading(true);
     try {
-      const response = await appApi.post('/evplug/update',{firstName, lastName, phoneNumber});
+      const re = /^[0-9]$/;
+      
+      if(phoneNumber.length < 10 && !re.test(phoneNumber)) {
+          setErrorMessage("Invalid phone number");
+      }else{
+        const response = await appApi.post('/evplug/update',{firstName, lastName, phoneNumber});
         setFirstName(response.data.firstName);
         setLastName(response.data.lastName);
         setPhone(response.data.phoneNumber.toString());
         setSuccess(true);
+      }
     } catch (err) {
         if(err && err.error){
           setErrorMessage(err.error);
@@ -98,7 +105,7 @@ const ProfileEditScreen = ({route, navigation}) => {
           autoCorrect={false}
           onChangeText={setPhone}
           maxLength={10}
-          keyboardType="phone-pad"
+          keyboardType="numeric"
         />
       </View>
       <View style={styles.save}>
