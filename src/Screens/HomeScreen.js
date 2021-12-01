@@ -9,33 +9,35 @@ import Search from '../components/Search';
 import {Context as LocationContext} from '../context/LocationContext';
 
 const HomeScreen = () => {
- 
-  const {state:{
-    evdetails, searchedLocation, 
-  },fetchPoiData, fetchSearchedLocation} = useContext(LocationContext);
+  const {
+    state: {evdetails, searchedLocation},
+    fetchPoiData,
+    fetchSearchedLocation,
+  } = useContext(LocationContext);
 
-  const [location , setLocation] = useState(null);
-  
+  const [location, setLocation] = useState(null);
+
   useEffect(() => {
     const getUsersLocation = async () => {
-         Geolocation.getCurrentPosition((response)=>{
-          const { latitude, longitude } = response.coords
-          setLocation({ latitude : latitude, longitude: longitude });
-          console.log('main tab',response);
-        }, (error) => {
-          setLocation({ latitude:37.773972, longitude: 	-122.431297});
-          console.log('Nullllllll');
-        },{
+      Geolocation.getCurrentPosition(
+        response => {
+          const {latitude, longitude} = response.coords;
+          setLocation({latitude: latitude, longitude: longitude});
+        },
+        error => {
+          setLocation({latitude: 37.773972, longitude: -122.431297});
+        },
+        {
           accuracy: {
-            android:'high',
-            ios:'best'
+            android: 'high',
+            ios: 'best',
           },
-          distanceFilter: 10 //meters
-        });
-    } 
+          distanceFilter: 10, //meters
+        },
+      );
+    };
     getUsersLocation();
-}, [])
-
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -43,10 +45,16 @@ const HomeScreen = () => {
         backgroundColor={Colors.darkPrimary}
         barStyle="light-content"
       />
-      {location ?  <Map fetchChargingStations={fetchPoiData} chargingStations={evdetails} searchedRegion={searchedLocation} currentLocation={location}/> : null}
-     
-      <Search search={fetchSearchedLocation}/>
+      {location ? (
+        <Map
+          fetchChargingStations={fetchPoiData}
+          chargingStations={evdetails}
+          searchedRegion={searchedLocation}
+          currentLocation={location}
+        />
+      ) : null}
 
+      <Search search={fetchSearchedLocation} />
     </SafeAreaView>
   );
 };
